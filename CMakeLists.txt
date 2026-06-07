@@ -11,10 +11,9 @@ option(ENABLE_COVERAGE "Enable coverage reporting" OFF)
 add_subdirectory(banking)
 
 if(ENABLE_COVERAGE)
-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        target_compile_options(banking INTERFACE -O0 -g --coverage -fprofile-arcs -ftest-coverage)
-        target_link_libraries(banking INTERFACE --coverage)
-    endif()
+    # Добавляем флаги покрытия для всего проекта
+    add_compile_options(-O0 -g --coverage -fprofile-arcs -ftest-coverage)
+    add_link_options(--coverage)
 endif()
 
 if(BUILD_TESTS)

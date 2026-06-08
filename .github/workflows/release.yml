@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Скрипт будет запускаться только тогда, когда мы пушим тег версии (например v0.1.0.0)
+
+jobs:
+  build_packages:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y rpm cmake build-essential
+
+    - name: Configure CMake
+      run: cmake -H. -B_build -DCPACK_GENERATOR="TGZ;DEB;RPM"
+
+    - name: Build Package
+      run: cmake --build _build --target package
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: _build/banking-*.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
